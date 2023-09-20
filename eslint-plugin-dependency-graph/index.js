@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const RESULT_PATH = path.resolve(__dirname, '../result.txt');
+const DEPENDENCIES_PATH = path.resolve(__dirname, '../fe/data/raw_dependencies.txt');
 
-fs.writeFileSync(RESULT_PATH, '');
+fs.writeFileSync(DEPENDENCIES_PATH, '');
 
 module.exports = {
   rules: {
@@ -20,14 +20,17 @@ module.exports = {
             const [, parentPath] = context.filename.split(context.cwd);
             const [, filename] = context.filename.split(context.cwd);
             const filePath = filename.split('/').slice(0, -1).join('/');
+            
+            // TODO typescript aliases
+            const isLocalModules = /\./i.test(node.source.value[0]);
 
             const item = {
               parentPath,
-              childPath: path.join(filePath, node.source.value),
+              childPath: isLocalModules ? path.join(filePath, node.source.value) : node.source.value,
               specifiers,
             };
 
-            fs.appendFileSync(RESULT_PATH, `${JSON.stringify(item)}\n`);
+            fs.appendFileSync(DEPENDENCIES_PATH, `${JSON.stringify(item)}\n`);
           },
         };
       },
