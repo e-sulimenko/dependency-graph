@@ -1,13 +1,6 @@
-type Specifier = {
-  type: 'ImportDefaultSpecifier' | 'ImportSpecifier';
-  localName: string;
-  importedName?: string;
-}
+import type { NodeDefinition, EdgeDefinition } from 'cytoscape';
 
-type DependencyNode = {
-  parentPath: string;
-  childPath: string;
-  specifiers: Specifier[];
+export type ParsedData = {
+  nodes: NodeDefinition[];
+  edges: EdgeDefinition[];
 }
-
-declare const initialData: DependencyNode[];
