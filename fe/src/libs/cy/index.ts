@@ -1,13 +1,13 @@
-import cytoscape from 'cytoscape';
+import cytoscape, { Core, NodeSingular } from 'cytoscape';
 
-import { NodeData } from '../@types';
+import { NodeData } from '../../@types';
 
 import { parseData } from './parse-data';
 import { COLORS } from './constants';
 
-export const boostrapCy = (container: HTMLElement) => {
+export const boostrapCy = (container: HTMLElement): Core => {
   const { nodes, edges } = parseData();
-  cytoscape({
+  return cytoscape({
     container,
     elements: {
       nodes,
@@ -28,8 +28,8 @@ export const boostrapCy = (container: HTMLElement) => {
             else if (type === 'side_effect_import') return COLORS.IMPORT_MODULE;
             return COLORS.SPECIFIER;
           },
-          // width: function(ele) { return Math.max(1, Math.ceil(ele.degree(false)/2)) * 20; },
-          // height: function(ele){ return Math.max(1, Math.ceil(ele.degree(false)/2)) * 20; }
+          width: (el: NodeSingular) => Math.max(1, Math.ceil(el.indegree(false) / 2)) * 20,
+          height: (el: NodeSingular) => Math.max(1, Math.ceil(el.indegree(false) / 2)) * 20,
         }
       },
       {

@@ -68,8 +68,6 @@ export const parseData = (): ParsedData => {
     });
   });
 
-  console.log(nodesDict);
-
   return {
     nodes: Object.values(nodesDict),
     edges: Object.values(edgeDict),
