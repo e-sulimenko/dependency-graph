@@ -1,7 +1,7 @@
 import type { EdgeDefinition, NodeDataDefinition } from 'cytoscape';
 
 export interface NodeData extends NodeDataDefinition {
-  type: 'module' | 'specifier' | 'tmp'
+  type: 'module' | 'specifier' | 'imported_module'
 }
 
 type NodeDefinition = {

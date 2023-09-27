@@ -39,7 +39,7 @@ export const parseData = (): ParsedData => {
       nodesDict[depNode.childPath] = createNode(
         depNode.childPath,
         depNode.childPath.split('/').at(-1) ?? depNode.childPath,
-        'tmp',
+        'imported_module',
       );
       const edgeId = depNode.parentPath + EDGE_PATH_SEPARATOR + depNode.childPath;
       edgeDict[edgeId] = createEdge(edgeId);
@@ -56,7 +56,7 @@ export const parseData = (): ParsedData => {
         edgeDict[edgeId] = createEdge(edgeId);
       } else {
         const specifierName = specifier.importedName ?? specifier.localName;
-        const nodeId = depNode.parentPath + NODE_PATH_SEPARATOR + specifierName;
+        const nodeId = depNode.childPath + NODE_PATH_SEPARATOR + specifierName;
         nodesDict[nodeId] = createNode(
           nodeId,
           specifierName,
@@ -67,6 +67,8 @@ export const parseData = (): ParsedData => {
       }
     });
   });
+
+  console.log(nodesDict);
 
   return {
     nodes: Object.values(nodesDict),
