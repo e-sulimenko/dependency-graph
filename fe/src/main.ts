@@ -19,6 +19,11 @@ const parseData = (): ParsedData => {
   initialData.forEach((depNode) => {
     componentsSet.add(depNode.parentPath);
 
+    if (depNode.specifiers.length === 0) {
+      componentsSet.add(depNode.childPath);
+      edgesSet.add(depNode.parentPath + EDGE_PATH_SEPARATOR + depNode.childPath);
+    }
+
     depNode.specifiers.forEach((specifier) => {
       if (specifier.type === 'ImportDefaultSpecifier') {
         componentsSet.add(depNode.childPath);
