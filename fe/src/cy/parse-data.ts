@@ -39,7 +39,7 @@ export const parseData = (): ParsedData => {
       nodesDict[depNode.childPath] = createNode(
         depNode.childPath,
         depNode.childPath.split('/').at(-1) ?? depNode.childPath,
-        'imported_module',
+        'side_effect_import',
       );
       const edgeId = depNode.parentPath + EDGE_PATH_SEPARATOR + depNode.childPath;
       edgeDict[edgeId] = createEdge(edgeId);

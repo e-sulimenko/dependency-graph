@@ -5,11 +5,10 @@ import { NodeData } from '../@types';
 import { parseData } from './parse-data';
 import { COLORS } from './constants';
 
-export const boostrapCy = () => {
-  const app = document.getElementById('app');
+export const boostrapCy = (container: HTMLElement) => {
   const { nodes, edges } = parseData();
   cytoscape({
-    container: app,
+    container,
     elements: {
       nodes,
       edges,
@@ -26,7 +25,7 @@ export const boostrapCy = () => {
           backgroundColor: (el) => {
             const { type } = el.data() as NodeData;
             if (type === 'module') return COLORS.MODULE;
-            else if (type === 'imported_module') return COLORS.IMPORT_MODULE;
+            else if (type === 'side_effect_import') return COLORS.IMPORT_MODULE;
             return COLORS.SPECIFIER;
           },
           // width: function(ele) { return Math.max(1, Math.ceil(ele.degree(false)/2)) * 20; },
