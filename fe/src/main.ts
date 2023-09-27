@@ -1,5 +1,5 @@
 import cytoscape from 'cytoscape';
-import type { NodeDefinition, EdgeDefinition } from '@types/cytoscape';
+import type { NodeDefinition, EdgeDefinition } from 'cytoscape';
 
 import './style.css';
 
