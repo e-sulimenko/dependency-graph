@@ -1,5 +1,5 @@
 type Specifier = {
-  type: 'ImportDefaultSpecifier' | 'ImportSpecifier';
+  type: 'ImportDefaultSpecifier' | 'ImportSpecifier' | 'ImportNamespaceSpecifier';
   localName: string;
   importedName?: string;
 }

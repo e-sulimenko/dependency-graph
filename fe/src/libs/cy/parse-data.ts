@@ -55,6 +55,16 @@ export const parseData = (): ParsedData => {
         );
         const edgeId = depNode.parentPath + EDGE_PATH_SEPARATOR + depNode.childPath;
         edgeDict[edgeId] = createEdge(edgeId);
+      } else if (specifier.type === 'ImportNamespaceSpecifier') {
+        const specifierName = `Namespace of ${depNode.childPath.split('/').at(-1) ?? depNode.childPath}`;
+        const nodeId = depNode.childPath + NODE_PATH_SEPARATOR + specifierName;
+        nodesDict[nodeId] = createNode(
+          nodeId,
+          specifierName,
+          'specifier',
+        );
+        const edgeId = depNode.parentPath + EDGE_PATH_SEPARATOR + nodeId;
+        edgeDict[edgeId] = createEdge(edgeId);
       } else {
         const specifierName = specifier.importedName ?? specifier.localName;
         const nodeId = depNode.childPath + NODE_PATH_SEPARATOR + specifierName;
