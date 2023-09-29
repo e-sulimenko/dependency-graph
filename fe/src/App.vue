@@ -26,6 +26,11 @@ const applyFilter = (filter: FilterType) => {
     ...SETTINGS.LAYOUT[filter.layout]
   }
   if (cyInstance.value != null) {
+    const prevZoom = cyInstance.value.zoom();
+    const prevPan = cyInstance.value.pan();
+    
+    cyInstance.value.layout(layout).run();
+
     cyInstance.value
       .style()
       .selector('node')
@@ -37,6 +42,9 @@ const applyFilter = (filter: FilterType) => {
       })
       .update()
 
+    cyInstance.value.zoom(prevZoom);
+    cyInstance.value.pan(prevPan);
+
     cyInstance.value.nodes().forEach((item) => {
       const { type } = item.data();
       if (type === 'node_module') {
@@ -44,7 +52,6 @@ const applyFilter = (filter: FilterType) => {
       }
     });
 
-    cyInstance.value.layout(layout).run();
 }
 }
 
