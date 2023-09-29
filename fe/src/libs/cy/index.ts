@@ -1,12 +1,13 @@
-import cytoscape, { Core, NodeSingular } from 'cytoscape';
+import cytoscape, { Core } from 'cytoscape';
 
 import { NodeData } from '../../@types';
 
 import { parseData } from './parse-data';
-import { COLORS } from './constants';
+import { NODE_COLORS, EDGE_COLORS } from './constants';
 
 export const boostrapCy = (container: HTMLElement): Core => {
   const { nodes, edges } = parseData();
+
   return cytoscape({
     container,
     elements: {
@@ -15,29 +16,28 @@ export const boostrapCy = (container: HTMLElement): Core => {
     },
     layout: {
       name: 'circle',
-      avoidOverlap: true,
     },
     style: [
       {
         selector: 'node',
         style: {
-          'label': 'data(name)',
+          label: 'data(name)',
           backgroundColor: (el) => {
             const { type } = el.data() as NodeData;
-            if (type === 'module') return COLORS.MODULE;
-            else if (type === 'side_effect_import') return COLORS.IMPORT_MODULE;
-            return COLORS.SPECIFIER;
+            if (type === 'module') return NODE_COLORS.module;
+            else if (type === 'side_effect_import') return NODE_COLORS.sideEffectImport;
+            return NODE_COLORS.specifier;
           },
-          width: (el: NodeSingular) => Math.max(1, Math.ceil(el.indegree(false) / 2)) * 20,
-          height: (el: NodeSingular) => Math.max(1, Math.ceil(el.indegree(false) / 2)) * 20,
+          width: '30px',
+          height: '30px',
         }
       },
       {
         selector: 'edge',
         style: {
           'width': 2,
-          'line-color': '#ccc',
-          'target-arrow-color': '#ccc',
+          'line-color': EDGE_COLORS.line,
+          'target-arrow-color': EDGE_COLORS.arrow,
           'target-arrow-shape': 'triangle',
           'curve-style': 'unbundled-bezier',
         }

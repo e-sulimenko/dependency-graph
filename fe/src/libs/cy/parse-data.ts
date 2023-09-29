@@ -1,5 +1,5 @@
 import type { EdgeDefinition } from 'cytoscape';
-import type { ParsedData, NodeData, NodeDefinition } from '../@types';
+import type { ParsedData, NodeData, NodeDefinition } from '../../@types';
 
 
 const EDGE_PATH_SEPARATOR = '->'
