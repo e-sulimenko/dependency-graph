@@ -27,6 +27,11 @@ const COLORS: COLOR_ITEM[] = [
   { id: 'arrow', text: 'Edge arrow' },
 ];
 
+// const SHOW_NODE_MODULES = [
+//   { id: 'all', text: 'All' },
+//   { id: 'all', text: 'All' },
+// ]
+
 export type Filter = {
   weight: keyof typeof SETTINGS.WEIGHT;
   layout: keyof typeof SETTINGS.LAYOUT;
@@ -36,7 +41,8 @@ export type Filter = {
     sideEffectImport: string;
     module: string;
     specifier: string;
-  }
+  };
+  showNodeModules: boolean;
 };
 
 const emit = defineEmits<{
@@ -52,7 +58,8 @@ const filter = reactive<Filter>({
     sideEffectImport: NODE_COLORS.sideEffectImport,
     module: NODE_COLORS.module,
     specifier: NODE_COLORS.specifier,
-  }
+  },
+  showNodeModules: true,
 });
 
 watch(filter, () => {
@@ -104,6 +111,16 @@ const handleChangeColor = (event: Event, type: COLOR_ITEM['id']) => {
         {{ item.text }}
       </label>
     </div>
+    <div class="filter__item">
+      Show Nodes:
+      <label>
+        <input
+          type="checkbox"
+          v-model="filter.showNodeModules"
+        >
+        node_modules
+      </label>
+    </div>
   </div>
 </template>
 
@@ -117,6 +134,7 @@ const handleChangeColor = (event: Event, type: COLOR_ITEM['id']) => {
   background-color: #eee;
   display: grid;
   gap: 8px;
+  user-select: none;
 
   &__item {
     display: grid;

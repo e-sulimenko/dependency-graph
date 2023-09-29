@@ -5,11 +5,12 @@ import type { ParsedData, NodeData, NodeDefinition } from '../../@types';
 const EDGE_PATH_SEPARATOR = '->'
 const NODE_PATH_SEPARATOR = '|'
 
-const createNode = (id: string, name: string, type: NodeData['type']): NodeDefinition => ({
+const createNode = (id: string, name: string, importType: NodeData['importType']): NodeDefinition => ({
   data: {
     id,
     name,
-    type,
+    importType,
+    type: id.startsWith('/') ? 'other' : 'node_module',
   },
 });
 

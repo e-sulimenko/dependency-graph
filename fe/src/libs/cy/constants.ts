@@ -40,9 +40,9 @@ export const SETTINGS = {
   COLOR: {
     NODE: ({ module, specifier, sideEffectImport }: Record<keyof typeof NODE_COLORS, string>) => ({
       'background-color': (el: NodeSingular) => {
-        const { type } = el.data() as NodeData;
-        if (type === 'module') return module;
-        else if (type === 'side_effect_import') return sideEffectImport;
+        const { importType } = el.data() as NodeData;
+        if (importType === 'module') return module;
+        else if (importType === 'side_effect_import') return sideEffectImport;
         return specifier;
       },
     }),

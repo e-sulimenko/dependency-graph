@@ -27,18 +27,25 @@ const applyFilter = (filter: FilterType) => {
   }
   if (cyInstance.value != null) {
     cyInstance.value
-    .style()
-    .selector('node')
-    .style(nodeStyleSettings)
-    .selector('edge')
-    .style({
-      'line-color': filter.color.line,
-      'target-arrow-color': filter.color.arrow,
-    })
-    .update()
-    
+      .style()
+      .selector('node')
+      .style(nodeStyleSettings)
+      .selector('edge')
+      .style({
+        'line-color': filter.color.line,
+        'target-arrow-color': filter.color.arrow,
+      })
+      .update()
+
+    cyInstance.value.nodes().forEach((item) => {
+      const { type } = item.data();
+      if (type === 'node_module') {
+        item.style('display', filter.showNodeModules ? 'element' : 'none');
+      }
+    });
+
     cyInstance.value.layout(layout).run();
-  }
+}
 }
 
 </script>

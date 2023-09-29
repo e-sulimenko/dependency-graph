@@ -23,9 +23,9 @@ export const boostrapCy = (container: HTMLElement): Core => {
         style: {
           label: 'data(name)',
           backgroundColor: (el) => {
-            const { type } = el.data() as NodeData;
-            if (type === 'module') return NODE_COLORS.module;
-            else if (type === 'side_effect_import') return NODE_COLORS.sideEffectImport;
+            const { importType } = el.data() as NodeData;
+            if (importType === 'module') return NODE_COLORS.module;
+            else if (importType === 'side_effect_import') return NODE_COLORS.sideEffectImport;
             return NODE_COLORS.specifier;
           },
           width: '30px',
