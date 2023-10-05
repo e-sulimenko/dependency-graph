@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue';
+import { SETTINGS } from '../../libs/cy/constants';
 
 import { LAYOUT_ITEM, COLOR_ITEM, WEIGHT_ITEM } from './@types';
-
-import { EDGE_COLORS, NODE_COLORS, SETTINGS } from '../../libs/cy/constants';
 
 
 const WEIGHTS: WEIGHT_ITEM[] = [
@@ -27,11 +25,6 @@ const COLORS: COLOR_ITEM[] = [
   { id: 'arrow', text: 'Edge arrow' },
 ];
 
-// const SHOW_NODE_MODULES = [
-//   { id: 'all', text: 'All' },
-//   { id: 'all', text: 'All' },
-// ]
-
 export type Filter = {
   weight: keyof typeof SETTINGS.WEIGHT;
   layout: keyof typeof SETTINGS.LAYOUT;
@@ -45,31 +38,14 @@ export type Filter = {
   showNodeModules: boolean;
 };
 
+defineProps<Filter>();
+
 const emit = defineEmits<{
-  (event: 'on-update-filter', filter: Filter): void;
+  (event: 'on-change-weight', e: Event): void;
+  (event: 'on-change-layout', e: Event): void;
+  (event: 'on-change-color', e: Event, type: COLOR_ITEM['id']): void;
+  (event: 'on-change-show-node-modules'): void;
 }>();
-
-const filter = reactive<Filter>({
-  weight: 'none',
-  layout: 'circle',
-  color: {
-    line: EDGE_COLORS.line,
-    arrow: EDGE_COLORS.arrow,
-    sideEffectImport: NODE_COLORS.sideEffectImport,
-    module: NODE_COLORS.module,
-    specifier: NODE_COLORS.specifier,
-  },
-  showNodeModules: true,
-});
-
-watch(filter, () => {
-  emit('on-update-filter', filter);
-});
-
-const handleChangeColor = (event: Event, type: COLOR_ITEM['id']) => {
-  filter.color[type] = (event.target as HTMLInputElement).value;
-}
-
 </script>
 
 <template>
@@ -78,11 +54,11 @@ const handleChangeColor = (event: Event, type: COLOR_ITEM['id']) => {
       Weight:
       <label v-for="item in WEIGHTS">
         <input
-          v-model="filter.weight"
           type="radio"
           name="weight"
           :value="item.id"
-          :checked="item.id === filter.weight"
+          :checked="item.id === $props.weight"
+          @change="(e) => $emit('on-change-weight', e)"
         >
         {{ item.text }}
       </label>
@@ -91,11 +67,11 @@ const handleChangeColor = (event: Event, type: COLOR_ITEM['id']) => {
       Layout:
       <label v-for="item in LAYOUTS" :key="item.id">
         <input
-          v-model="filter.layout"
           type="radio"
           name="layout"
           :value="item.id"
-          :checked="item.id === filter.layout"
+          :checked="item.id === $props.layout"
+          @change="(e) => $emit('on-change-layout', e)"
         >
         {{ item.text }}
       </label>
@@ -105,8 +81,8 @@ const handleChangeColor = (event: Event, type: COLOR_ITEM['id']) => {
       <label v-for="item in COLORS" :key="item.id">
         <input
           type="color"
-          :value="filter.color[item.id]"
-          @change="(event) => handleChangeColor(event, item.id)"
+          :value="$props.color[item.id]"
+          @change="(event) => $emit('on-change-color', event, item.id)"
         >
         {{ item.text }}
       </label>
@@ -116,7 +92,8 @@ const handleChangeColor = (event: Event, type: COLOR_ITEM['id']) => {
       <label>
         <input
           type="checkbox"
-          v-model="filter.showNodeModules"
+          :checked="$props.showNodeModules"
+          @change="$emit('on-change-show-node-modules')"
         >
         node_modules
       </label>

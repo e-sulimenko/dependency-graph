@@ -1,14 +1,28 @@
 <script setup lang="ts">
 import { Core } from 'cytoscape';
-import { ref, watchEffect } from 'vue';
+import { reactive, ref, watchEffect } from 'vue';
 
 import Filter, { Filter as FilterType } from './components/Filter/Filter.vue';
-
 import { boostrapCy } from './libs/cy';
-import { SETTINGS } from './libs/cy/constants';
+import { EDGE_COLORS, NODE_COLORS, SETTINGS } from './libs/cy/constants';
+import { COLOR_ITEM } from './components/Filter/@types';
 
 const cyContainer = ref(null);
 const cyInstance = ref<Core | null>(null);
+
+const filter = reactive<FilterType>({
+  weight: 'none',
+  layout: 'circle',
+  color: {
+    line: EDGE_COLORS.line,
+    arrow: EDGE_COLORS.arrow,
+    sideEffectImport: NODE_COLORS.sideEffectImport,
+    module: NODE_COLORS.module,
+    specifier: NODE_COLORS.specifier,
+  },
+  showNodeModules: true,
+});
+
 
 watchEffect(() => {
   if (cyContainer.value) {
@@ -16,50 +30,84 @@ watchEffect(() => {
   }
 });
 
-const applyFilter = (filter: FilterType) => {
-  const nodeStyleSettings = {
-    ...SETTINGS.WEIGHT[filter.weight],
-    ...SETTINGS.COLOR.NODE(filter.color),
-  };
+const updateLayout = () => {
+  if (cyInstance.value == null) return;
 
-  const layout = {
-    ...SETTINGS.LAYOUT[filter.layout]
-  }
-  if (cyInstance.value != null) {
-    const prevZoom = cyInstance.value.zoom();
-    const prevPan = cyInstance.value.pan();
-    
-    cyInstance.value.layout(layout).run();
+  const prevZoom = cyInstance.value.zoom();
+  const prevPan = cyInstance.value.pan();
 
-    cyInstance.value
+  cyInstance.value.layout(SETTINGS.LAYOUT[filter.layout]).run();
+
+  cyInstance.value.zoom(prevZoom);
+  cyInstance.value.pan(prevPan);
+};
+
+const onChangeWeight = (event: Event) => {
+  if (cyInstance.value == null) return;
+
+  filter.weight = (event.target as HTMLInputElement).value as FilterType['weight'];
+
+  const weightStyle = SETTINGS.WEIGHT[filter.weight];
+  cyInstance.value
       .style()
       .selector('node')
-      .style(nodeStyleSettings)
-      .selector('edge')
-      .style({
-        'line-color': filter.color.line,
-        'target-arrow-color': filter.color.arrow,
-      })
+      .style(weightStyle)
       .update()
+  
+  updateLayout();
+};
 
-    cyInstance.value.zoom(prevZoom);
-    cyInstance.value.pan(prevPan);
+const onChangeLayout = (event: Event) => {
+  if (cyInstance.value == null) return;
 
-    cyInstance.value.nodes().forEach((item) => {
-      const { type } = item.data();
-      if (type === 'node_module') {
-        item.style('display', filter.showNodeModules ? 'element' : 'none');
-      }
-    });
+  filter.layout = (event.target as HTMLInputElement).value as FilterType['layout'];
+  cyInstance.value.layout(SETTINGS.LAYOUT[filter.layout]).run();
 
+  updateLayout();
+};
+
+const onChangeColor = (event: Event, type:  COLOR_ITEM['id']) => {
+  if (cyInstance.value == null) return;
+
+  filter.color[type] = (event.target as HTMLInputElement).value;
+  cyInstance.value
+      .style()
+      .selector('node')
+      .style(SETTINGS.COLOR.NODE(filter.color))
+      .update();
+  cyInstance.value.layout(SETTINGS.LAYOUT[filter.layout]).run();
+
+  updateLayout();
 }
-}
+
+const onChangeShowNodeModules = () => {
+  if (cyInstance.value == null) return;
+  
+  filter.showNodeModules = !filter.showNodeModules;
+  
+  cyInstance.value.nodes().forEach((item) => {
+    const { type } = item.data();
+    if (type === 'node_module') {
+      item.style('display', filter.showNodeModules ? 'element' : 'none');
+    }
+  });
+
+};
 
 </script>
 
 <template>
   <div ref="cyContainer" class="cy-container" />
-  <Filter @on-update-filter="applyFilter" />
+  <Filter
+    :weight="filter.weight"
+    :layout="filter.layout"
+    :color="filter.color"
+    :show-node-modules="filter.showNodeModules"
+    @on-change-weight="onChangeWeight"
+    @on-change-layout="onChangeLayout"
+    @on-change-color="onChangeColor"
+    @on-change-show-node-modules="onChangeShowNodeModules"
+  />
 </template>
 
 <style scoped>
