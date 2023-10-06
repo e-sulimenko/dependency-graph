@@ -5,12 +5,13 @@ import type { ParsedData, NodeData, NodeDefinition } from '../../@types';
 const EDGE_PATH_SEPARATOR = '->'
 const NODE_PATH_SEPARATOR = '|'
 
-const createNode = (id: string, name: string, importType: NodeData['importType']): NodeDefinition => ({
+const createNode = (id: string, name: string, importType: NodeData['importType'], parent?: string): NodeDefinition => ({
   data: {
     id,
     name,
     importType,
     type: id.startsWith('/') ? 'other' : 'node_module',
+    parent,
   },
 });
 
@@ -41,6 +42,7 @@ export const parseData = (): ParsedData => {
         depNode.childPath,
         depNode.childPath.split('/').at(-1) ?? depNode.childPath,
         'side_effect_import',
+        depNode.parentPath,
       );
       const edgeId = depNode.parentPath + EDGE_PATH_SEPARATOR + depNode.childPath;
       edgeDict[edgeId] = createEdge(edgeId);
@@ -52,16 +54,18 @@ export const parseData = (): ParsedData => {
           depNode.childPath,
           depNode.childPath.split('/').at(-1) ?? depNode.childPath,
           'module',
+          depNode.parentPath,
         );
         const edgeId = depNode.parentPath + EDGE_PATH_SEPARATOR + depNode.childPath;
         edgeDict[edgeId] = createEdge(edgeId);
       } else if (specifier.type === 'ImportNamespaceSpecifier') {
-        const specifierName = `Namespace of ${depNode.childPath.split('/').at(-1) ?? depNode.childPath}`;
+        const specifierName = `ns ${depNode.childPath.split('/').at(-1) ?? depNode.childPath}`;
         const nodeId = depNode.childPath + NODE_PATH_SEPARATOR + specifierName;
         nodesDict[nodeId] = createNode(
           nodeId,
           specifierName,
           'specifier',
+          depNode.parentPath,
         );
         const edgeId = depNode.parentPath + EDGE_PATH_SEPARATOR + nodeId;
         edgeDict[edgeId] = createEdge(edgeId);
@@ -72,6 +76,7 @@ export const parseData = (): ParsedData => {
           nodeId,
           specifierName,
           'specifier',
+          depNode.parentPath,
         );
         const edgeId = depNode.parentPath + EDGE_PATH_SEPARATOR + nodeId;
         edgeDict[edgeId] = createEdge(edgeId);

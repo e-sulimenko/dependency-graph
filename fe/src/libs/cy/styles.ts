@@ -28,5 +28,13 @@ export const defaultStyles = [
       'target-arrow-shape': 'triangle',
       'curve-style': 'unbundled-bezier',
     }
-  }
+  },
+  {
+    selector: ':parent',
+    style: {
+     'background-opacity': 0.2,
+      'background-color': '#e8e8e8',
+      'border-color': '#DADADA',
+    }
+  },
 ];
