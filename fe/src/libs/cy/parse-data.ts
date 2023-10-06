@@ -12,6 +12,7 @@ const createNode = (id: string, name: string, importType: NodeData['importType']
     importType,
     type: id.startsWith('/') ? 'other' : 'node_module',
     parent,
+    defaultParent: parent,
   },
 });
 

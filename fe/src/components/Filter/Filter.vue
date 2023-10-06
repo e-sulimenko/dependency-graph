@@ -36,6 +36,7 @@ export type Filter = {
     specifier: string;
   };
   showNodeModules: boolean;
+  showGroups: boolean;
 };
 
 defineProps<Filter>();
@@ -45,6 +46,7 @@ const emit = defineEmits<{
   (event: 'on-change-layout', e: Event): void;
   (event: 'on-change-color', e: Event, type: COLOR_ITEM['id']): void;
   (event: 'on-change-show-node-modules'): void;
+  (event: 'on-change-show-groups'): void;
 }>();
 </script>
 
@@ -52,7 +54,7 @@ const emit = defineEmits<{
   <div class="filter">
     <div class="filter__item">
       Weight:
-      <label v-for="item in WEIGHTS">
+      <label class="filter__label" v-for="item in WEIGHTS">
         <input
           type="radio"
           name="weight"
@@ -65,7 +67,7 @@ const emit = defineEmits<{
     </div>
     <div class="filter__item">
       Layout:
-      <label v-for="item in LAYOUTS" :key="item.id">
+      <label class="filter__label" v-for="item in LAYOUTS" :key="item.id">
         <input
           type="radio"
           name="layout"
@@ -78,7 +80,7 @@ const emit = defineEmits<{
     </div>
     <div class="filter__item">
       Color:
-      <label v-for="item in COLORS" :key="item.id">
+      <label class="filter__label" v-for="item in COLORS" :key="item.id">
         <input
           type="color"
           :value="$props.color[item.id]"
@@ -89,7 +91,7 @@ const emit = defineEmits<{
     </div>
     <div class="filter__item">
       Show Nodes:
-      <label>
+      <label class="filter__label">
         <input
           type="checkbox"
           :checked="$props.showNodeModules"
@@ -98,6 +100,14 @@ const emit = defineEmits<{
         node_modules
       </label>
     </div>
+    <label class="filter__item filter__item--two-columns filter__label">
+      Show Groups:
+      <input
+        type="checkbox"
+        :checked="$props.showGroups"
+        @change="$emit('on-change-show-groups')"
+      >
+    </label>
   </div>
 </template>
 
@@ -118,13 +128,17 @@ const emit = defineEmits<{
     grid-template-columns: max-content;
     gap: 6px;
 
-    label {
-      padding-left: 16px; 
-      cursor: pointer;
-      display: grid;
-      grid-template-columns: max-content 1fr;
-      gap: 16px;
+    &--two-columns {
+      grid-template-columns: max-content max-content;
     }
+  }
+
+  &__label {
+    padding-left: 16px; 
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 16px;
   }
 }
 </style>

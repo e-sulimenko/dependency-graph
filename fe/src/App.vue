@@ -21,6 +21,7 @@ const filter = reactive<FilterType>({
     specifier: NODE_COLORS.specifier,
   },
   showNodeModules: true,
+  showGroups: true,
 });
 
 
@@ -86,13 +87,25 @@ const onChangeShowNodeModules = () => {
   filter.showNodeModules = !filter.showNodeModules;
   
   cyInstance.value.nodes().forEach((item) => {
-    const { type } = item.data();
+    const type = item.data('type');
     if (type === 'node_module') {
       item.style('display', filter.showNodeModules ? 'element' : 'none');
     }
   });
 
 };
+
+const onChnageShowGroups = () => {
+  if (cyInstance.value == null) return;
+  
+  filter.showGroups = !filter.showGroups;
+  cyInstance.value.nodes().forEach((item) => {
+    const defaultParent = item.data('defaultParent');
+
+    if (filter.showGroups) item.move({ parent: defaultParent })
+    else item.move({ parent: null })
+  });
+}
 
 </script>
 
@@ -103,10 +116,12 @@ const onChangeShowNodeModules = () => {
     :layout="filter.layout"
     :color="filter.color"
     :show-node-modules="filter.showNodeModules"
+    :show-groups="filter.showGroups"
     @on-change-weight="onChangeWeight"
     @on-change-layout="onChangeLayout"
     @on-change-color="onChangeColor"
     @on-change-show-node-modules="onChangeShowNodeModules"
+    @on-change-show-groups="onChnageShowGroups"
   />
 </template>
 
